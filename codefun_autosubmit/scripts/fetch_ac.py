@@ -6,7 +6,7 @@ from ..core.browser import setup_driver
 from ..core.submission import SubmissionManager
 
 
-def main():
+def main(crawl_folder=None):
     """Main function for fetching accepted submissions."""
     load_dotenv()
     language = getenv("LANGUAGE")
@@ -17,7 +17,7 @@ def main():
     sublist = submission_manager.get_all_accepted_submissions()
     
     for problem in sublist:
-        submission_manager.retrieve_submission(problem[0], problem[1], language)
+        submission_manager.retrieve_submission(problem[0], problem[1], language, crawl_folder=crawl_folder)
 
 
 if __name__ == "__main__":

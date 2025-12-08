@@ -9,16 +9,16 @@ from ..core.submission import SubmissionManager
 from ..core.utils import get_loop_list
 
 
-def main():
+def main(input_folder=None):
     """Main function for batch submission."""
     load_dotenv()
-    file_path = getenv("PATH_TO_FOLDER")
+    file_path = input_folder or getenv("PATH_TO_FOLDER")
     sublist = []
 
     print(f"Preparing for submission of all files in folder {file_path}")
     
     try:
-        sublist = get_loop_list()
+        sublist = get_loop_list(file_path)
     except ConnectionError:
         print("Connection error")
         exit(1)

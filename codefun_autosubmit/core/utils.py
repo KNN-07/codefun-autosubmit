@@ -52,10 +52,10 @@ def get_accepted_problems():
     return accepted
 
 
-def get_loop_list():
+def get_loop_list(folder_path=None):
     """Get list of problems to submit (not yet accepted)."""
     load_dotenv()
-    file_path = getenv("PATH_TO_FOLDER")
+    file_path = folder_path or getenv("PATH_TO_FOLDER")
     ext = get_extension(getenv("LANGUAGE"))
     aclist = get_accepted_problems()
     

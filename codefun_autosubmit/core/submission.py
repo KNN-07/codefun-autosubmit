@@ -60,20 +60,20 @@ class SubmissionManager:
         lang = get_language(filename[filename.rfind('.') + 1:])
         Query(self.driver, filename, lang, filename[:filename.rfind('.')].split("\\")[-1])
     
-    def submit_by_id(self, problem_id, language):
+    def submit_by_id(self, problem_id, language, input_folder=None):
         """Submit code by problem ID and language."""
         load_dotenv()
-        file_path = getenv("PATH_TO_FOLDER")
+        file_path = input_folder or getenv("PATH_TO_FOLDER")
         ext = get_extension(language)
         Query(self.driver, f"{file_path}\\P{problem_id}.{ext}", language, f"P{problem_id}")
     
-    def retrieve_submission(self, submission_id, problem_code, language):
+    def retrieve_submission(self, submission_id, problem_code, language, crawl_folder=None):
         """Retrieve submitted code."""
         load_page(self.driver, f"https://codefun.vn/submissions/{submission_id}", 3)
         login_to_codefun(self.driver)
 
         load_dotenv()
-        path = getenv("PATH_TO_FOLDER")
+        path = crawl_folder or getenv("CRAWL_FOLDER") or getenv("PATH_TO_FOLDER")
 
         try:
             rawcode = self.driver.find_element(By.XPATH, "//code").text

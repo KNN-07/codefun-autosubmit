@@ -24,12 +24,24 @@ def main():
         default=['001'],
         help='List of problem IDs to submit (default: 001)'
     )
+    auto_parser.add_argument(
+        '--input-folder',
+        help='Folder containing files to submit (overrides PATH_TO_FOLDER env var)'
+    )
     
     # Batch submit command
     batch_parser = subparsers.add_parser('batch', help='Submit all files in folder')
+    batch_parser.add_argument(
+        '--input-folder',
+        help='Folder containing files to submit (overrides PATH_TO_FOLDER env var)'
+    )
     
     # Fetch AC command
     fetch_parser = subparsers.add_parser('fetch', help='Fetch accepted submissions')
+    fetch_parser.add_argument(
+        '--crawl-folder',
+        help='Folder to save crawled submissions (overrides CRAWL_FOLDER env var)'
+    )
     
     # Setup command
     setup_parser = subparsers.add_parser('setup', help='Setup configuration')
@@ -47,11 +59,11 @@ def main():
         if args.tasks != ['001']:
             from .scripts.auto_submit import tasks
             tasks[:] = args.tasks
-        auto_submit()
+        auto_submit(input_folder=args.input_folder)
     elif args.command == 'batch':
-        batch_submit()
+        batch_submit(input_folder=args.input_folder)
     elif args.command == 'fetch':
-        fetch_ac()
+        fetch_ac(crawl_folder=args.crawl_folder)
     elif args.command == 'setup':
         setup_configuration()
 
@@ -74,10 +86,15 @@ def setup_configuration():
     username = input("What is your Codefun username?\n")
     pwd = input("What is the password?\n")
 
-    filepath = input(
-        "What is the absolute path to the folder containing your code?\n").replace("/", "\\")
-    if filepath.endswith("\\"):
-        filepath = filepath[:-1]
+    input_filepath = input(
+        "What is the absolute path to the folder containing your code for submission?\n").replace("/", "\\")
+    if input_filepath.endswith("\\"):
+        input_filepath = input_filepath[:-1]
+
+    crawl_filepath = input(
+        "What is the absolute path to the folder for saving crawled submissions?\n").replace("/", "\\")
+    if crawl_filepath.endswith("\\"):
+        crawl_filepath = crawl_filepath[:-1]
 
     lang = input(
         "What is the default submitting language? (C++/Python3/Pascal/NAsm)\n")
@@ -93,7 +110,8 @@ def setup_configuration():
     with open(".env", "w") as f:
         f.write(f"CF_USERNAME = {username}\n")
         f.write(f"CF_PASSWORD = {pwd}\n")
-        f.write(f"PATH_TO_FOLDER = {filepath}\n")
+        f.write(f"PATH_TO_FOLDER = {input_filepath}\n")
+        f.write(f"CRAWL_FOLDER = {crawl_filepath}\n")
         f.write(f"LANGUAGE = {lang}\n")
         f.write(f"CHROME_PATH = {chromedriverpath}\n")
 

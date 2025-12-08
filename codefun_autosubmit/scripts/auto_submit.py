@@ -7,7 +7,7 @@ from ..core.browser import setup_driver
 from ..core.submission import SubmissionManager
 
 
-def main():
+def main(input_folder=None):
     """Main function for auto-submission."""
     tasks = ["001"]  # Edit this list to specify problems to submit
     language = getenv("LANGUAGE", "Python3")
@@ -17,7 +17,7 @@ def main():
 
     for task_id in tasks:
         try:
-            submission_manager.submit_by_id(task_id, language)
+            submission_manager.submit_by_id(task_id, language, input_folder=input_folder)
             print(f"{task_id} submitted, waiting for 90 secs")
             time.sleep(90)
         except KeyboardInterrupt:
