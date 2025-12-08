@@ -36,7 +36,7 @@ def get_language(extension):
     raise Exception("Not a valid language")
 
 
-def get_accepted_problems():
+def get_accepted_problems(use_tracker=True):
     """Get list of accepted problems from Codefun API."""
     load_dotenv()
     username = getenv("CF_USERNAME")
@@ -48,6 +48,15 @@ def get_accepted_problems():
     for submission in json_data:
         if abs(submission["score"] - submission["maxScore"]) < 0.000000001:
             accepted.append(submission["problem"]["code"])
+    
+    # Sync with tracker if enabled
+    if use_tracker:
+        try:
+            from .tracker import AccountTracker
+            tracker = AccountTracker()
+            tracker.sync_with_api(accepted)
+        except Exception:
+            pass  # Fail silently if tracker has issues
     
     return accepted
 

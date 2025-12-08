@@ -9,15 +9,19 @@ from dotenv import load_dotenv
 from os import getenv
 from .browser import load_page, login_to_codefun
 from .utils import get_extension
+from .tracker import AccountTracker
 
 
 class Query:
     """Handle individual code submission queries."""
     
-    def __init__(self, driver, abspath, lang, problem_id):
+    def __init__(self, driver, abspath, lang, problem_id, tracker=None):
         """Initialize submission query."""
         load_page(driver, "https://codefun.vn/submit", 5)
         login_to_codefun(driver)
+        self.tracker = tracker
+        self.problem_id = problem_id
+        self.language = lang
 
         try:
             form_pcode = driver.find_element(By.XPATH, "//input[@placeholder = 'Pxxxxx']")
@@ -40,6 +44,11 @@ class Query:
         form_sol.send_keys(Keys.CONTROL, "v")
         pyperclip.copy(old_clipboard)
         form_submit.click()
+        
+        # Track submission
+        if self.tracker:
+            self.tracker.mark_submitted(problem_id, language=lang)
+            self.tracker.mark_local_file_exists(problem_id, abspath, lang)
 
     def __del__(self):
         """Cleanup."""
@@ -49,23 +58,26 @@ class Query:
 class SubmissionManager:
     """Manage code submissions."""
     
-    def __init__(self, driver):
+    def __init__(self, driver, use_tracker=True):
         """Initialize submission manager."""
         self.driver = driver
+        self.tracker = AccountTracker() if use_tracker else None
     
     def submit_file(self, filename):
-        """Submit a single file."""
-        from .utils import get_language
+            """Submit a single file."""
+            from .utils import get_language
+            
+            lang = get_language(filename[filename.rfind('.') + 1:])
+            problem_id = filename[:filename.rfind('.')].split("\\")[-1]
+            Query(self.driver, filename, lang, problem_id, self.tracker)
         
-        lang = get_language(filename[filename.rfind('.') + 1:])
-        Query(self.driver, filename, lang, filename[:filename.rfind('.')].split("\\")[-1])
-    
     def submit_by_id(self, problem_id, language, input_folder=None):
-        """Submit code by problem ID and language."""
-        load_dotenv()
-        file_path = input_folder or getenv("PATH_TO_FOLDER")
-        ext = get_extension(language)
-        Query(self.driver, f"{file_path}\\P{problem_id}.{ext}", language, f"P{problem_id}")
+            """Submit code by problem ID and language."""
+            load_dotenv()
+            file_path = input_folder or getenv("PATH_TO_FOLDER")
+            ext = get_extension(language)
+            full_path = f"{file_path}\\P{problem_id}.{ext}"
+            Query(self.driver, full_path, language, f"P{problem_id}", self.tracker)
     
     def retrieve_submission(self, submission_id, problem_code, language, crawl_folder=None):
         """Retrieve submitted code."""
@@ -98,11 +110,11 @@ class SubmissionManager:
         import requests
         response = requests.get(f"https://codefun.vn/api/users/{username}/stats?")
         data = response.json()["data"]
-
         sublist = []
-
         for problem in data:
             if abs(problem["score"] - problem["maxScore"]) < 0.000000001:
                 sublist.append([problem["submissionId"], problem["problem"]["code"]])
-
+                # Track accepted submissions
+                if self.tracker:
+                    self.tracker.mark_accepted(problem["problem"]["code"], problem["submissionId"])
         return sublist
