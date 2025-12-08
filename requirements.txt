@@ -1,0 +1,4 @@
+pyperclip==1.11.0  
+python-dotenv==1.2.1  
+selenium==4.39.0  
+requests==2.32.5 
