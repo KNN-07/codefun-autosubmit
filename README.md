@@ -10,6 +10,7 @@ Based on: https://github.com/Unknown15082/CodefunAutoSubmit
 - 📝 **Multiple Languages**: Support for C++, Python3, Pascal, and NAsm
 - 🎯 **Flexible Submission**: Submit by problem ID or batch submit entire folders
 - 📥 **Fetch Submissions**: Download your accepted submissions
+- 📊 **Account Tracking**: Track submission status and local files
 - 🛠️ **CLI Interface**: Easy-to-use command-line interface
 - ⚙️ **Environment Configuration**: Secure configuration with .env files
 
@@ -65,16 +66,39 @@ codefun batch
 codefun fetch
 ```
 
+### 5. Account Tracking
+
+```bash
+# Show tracking summary (run directly)
+python -m codefun_autosubmit.scripts.account_tracker summary
+
+# Show accepted problems
+python -m codefun_autosubmit.scripts.account_tracker accepted
+
+# Show submitted but not accepted problems
+python -m codefun_autosubmit.scripts.account_tracker submitted
+
+# Show problems with local files
+python -m codefun_autosubmit.scripts.account_tracker local
+
+# Sync tracking data with API
+python -m codefun_autosubmit.scripts.account_tracker sync
+
+# Show all information
+python -m codefun_autosubmit.scripts.account_tracker all
+```
+
 ## Configuration
 
 The tool uses a `.env` file for configuration. After running `codefun setup`, your `.env` file will look like:
 
 ```env
-CF_USERNAME=your_username
-CF_PASSWORD=your_password
-PATH_TO_FOLDER=C:\path\to\your\code\files
-LANGUAGE=Python3
-CHROME_PATH=chromedriver.exe
+CF_USERNAME = your_username
+CF_PASSWORD = your_password
+PATH_TO_FOLDER = C:\path\to\your\code\files
+CRAWL_FOLDER = C:\path\to\save\submissions
+LANGUAGE = Python3
+CHROME_PATH = chromedriver.exe
 ```
 
 ### Environment Variables
@@ -82,6 +106,7 @@ CHROME_PATH=chromedriver.exe
 - `CF_USERNAME`: Your Codefun.vn username
 - `CF_PASSWORD`: Your Codefun.vn password  
 - `PATH_TO_FOLDER`: Absolute path to your code files
+- `CRAWL_FOLDER`: Absolute path to save downloaded submissions
 - `LANGUAGE`: Default programming language (C++/Python3/Pascal/NAsm)
 - `CHROME_PATH`: Path to chromedriver.exe (or "NA" for automatic management)
 
@@ -136,6 +161,9 @@ codefun batch
 
 # Fetch all accepted submissions
 codefun fetch
+
+# Account tracking (run directly)
+python -m codefun_autosubmit.scripts.account_tracker summary
 ```
 
 ## Development
@@ -179,8 +207,10 @@ codefun_autosubmit/
 │   ├── core/               # Core functionality
 │   │   ├── browser.py      # Browser automation
 │   │   ├── submission.py   # Submission logic
+│   │   ├── tracker.py      # Account tracking
 │   │   └── utils.py        # Utility functions
 │   └── scripts/            # High-level scripts
+│       ├── account_tracker.py # Account tracking management
 │       ├── auto_submit.py  # Auto submission
 │       ├── batch_submit.py # Batch submission
 │       └── fetch_ac.py     # Fetch submissions
@@ -201,6 +231,14 @@ codefun_autosubmit/
 - pyperclip==1.11.0 - Clipboard operations
 - python-dotenv==1.2.1 - Environment configuration
 - requests==2.32.5 - HTTP requests
+
+### Development Dependencies
+
+- pytest>=7.0.0 - Testing framework
+- pytest-cov>=4.0.0 - Coverage reporting
+- black>=22.0.0 - Code formatting
+- flake8>=5.0.0 - Linting
+- mypy>=1.0.0 - Type checking
 
 ## License
 

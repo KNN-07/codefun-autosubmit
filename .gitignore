@@ -6,3 +6,4 @@ chromedriver.exe
 
 .pytest_cache
 .mypy_cache
+account_tracking.json
