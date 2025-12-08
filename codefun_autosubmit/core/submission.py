@@ -87,7 +87,7 @@ class SubmissionManager:
             return
 
         from .utils import get_extension
-        with open(f"{path}/{problem_code}.{get_extension(language)}", "w+") as f:
+        with open(f"{path}/{problem_code}.{get_extension(language)}", "w+", encoding="utf-8") as f:
             f.write(rawcode)
     
     def get_all_accepted_submissions(self):
