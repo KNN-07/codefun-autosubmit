@@ -1,9 +1,30 @@
 """Utility functions for language handling and API interactions."""
 
 import json
+import os
 import requests
 from dotenv import load_dotenv
 from os import getenv, listdir
+from pathlib import Path
+
+
+def get_config_path():
+    """Get absolute path to AppData configuration folder."""
+    if os.name == 'nt':  # Windows
+        appdata = os.environ.get('APPDATA', '')
+        config_dir = Path(appdata) / 'codefun-autosubmit'
+    else:  # macOS/Linux
+        home = os.environ.get('HOME', '')
+        config_dir = Path(home) / '.config' / 'codefun-autosubmit'
+    
+    config_dir.mkdir(parents=True, exist_ok=True)
+    return config_dir / '.env'
+
+
+def load_config():
+    """Load configuration from AppData .env file."""
+    env_path = get_config_path()
+    load_dotenv(env_path)
 
 
 def get_extension(language):
@@ -38,7 +59,7 @@ def get_language(extension):
 
 def get_accepted_problems():
     """Get list of accepted problems from Codefun API."""
-    load_dotenv()
+    load_config()
     username = getenv("CF_USERNAME")
     
     accepted = []
@@ -54,7 +75,7 @@ def get_accepted_problems():
 
 def get_loop_list(folder_path=None):
     """Get list of problems to submit (not yet accepted)."""
-    load_dotenv()
+    load_config()
     file_path = folder_path or getenv("PATH_TO_FOLDER")
     aclist = get_accepted_problems()
     

@@ -2,7 +2,7 @@
 
 import argparse
 import sys
-from dotenv import load_dotenv
+from .core.utils import load_config
 from .scripts.auto_submit import main as auto_submit
 from .scripts.batch_submit import main as batch_submit
 from .scripts.fetch_ac import main as fetch_ac
@@ -52,7 +52,7 @@ def main():
         parser.print_help()
         return
     
-    load_dotenv()
+    load_config()
     
     if args.command == 'auto':
         # Override tasks if provided
@@ -72,10 +72,10 @@ def setup_configuration():
     """Interactive setup for configuration."""
     import os
     import webbrowser
+    from .core.utils import get_config_path
     
     try:
         import time
-        from dotenv import load_dotenv
         import json
         from selenium import webdriver
         import requests
@@ -117,7 +117,8 @@ def setup_configuration():
         chromedriverpath = input(
             "What is the path to your chromedriver.exe file?\n")
     
-    with open(".env", "w") as f:
+env_path = get_config_path()
+    with open(env_path, "w") as f:
         f.write(f"CF_USERNAME = {username}\n")
         f.write(f"CF_PASSWORD = {pwd}\n")
         f.write(f"PATH_TO_FOLDER = {input_filepath}\n")
@@ -126,7 +127,8 @@ def setup_configuration():
         f.write(f"SUBMIT_WAIT_TIME = {wait_time}\n")
         f.write(f"SUBMIT_RANDOM_RANGE = {random_range}\n")
         f.write(f"CHROME_PATH = {chromedriverpath}\n")
-
+    
+    print(f"Configuration saved to: {env_path}")
     print("Success")
 
 

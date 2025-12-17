@@ -2,17 +2,16 @@
 
 import random
 import time
-from dotenv import load_dotenv
 from os import getenv
 from requests.exceptions import ConnectionError
 from ..core.browser import setup_driver
 from ..core.submission import SubmissionManager
-from ..core.utils import get_loop_list
+from ..core.utils import get_loop_list, load_config
 
 
 def main(input_folder=None):
     """Main function for batch submission."""
-    load_dotenv()
+    load_config()
     file_path = input_folder or getenv("PATH_TO_FOLDER")
     base_wait_time = int(getenv("SUBMIT_WAIT_TIME", "90"))
     random_range = int(getenv("SUBMIT_RANDOM_RANGE", "0"))

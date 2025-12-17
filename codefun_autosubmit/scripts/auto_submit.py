@@ -3,9 +3,9 @@
 import random
 import time
 from os import getenv
-from dotenv import load_dotenv
 from ..core.browser import setup_driver
 from ..core.submission import SubmissionManager
+from ..core.utils import load_config
 
 
 def main(input_folder=None):
@@ -33,5 +33,5 @@ def main(input_folder=None):
 
 
 if __name__ == "__main__":
-    load_dotenv()
+    load_config()
     main()

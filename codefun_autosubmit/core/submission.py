@@ -5,10 +5,9 @@ import pyperclip
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
-from dotenv import load_dotenv
 from os import getenv
 from .browser import load_page, login_to_codefun
-from .utils import get_extension
+from .utils import get_extension, load_config
 
 
 class Query:
@@ -62,7 +61,7 @@ class SubmissionManager:
     
     def submit_by_id(self, problem_id, language, input_folder=None):
         """Submit code by problem ID and language."""
-        load_dotenv()
+        load_config()
         file_path = input_folder or getenv("PATH_TO_FOLDER")
         
         # Check for files with different extensions
@@ -98,7 +97,7 @@ class SubmissionManager:
         load_page(self.driver, f"https://codefun.vn/submissions/{submission_id}", 3)
         login_to_codefun(self.driver)
 
-        load_dotenv()
+        load_config()
         path = crawl_folder or getenv("CRAWL_FOLDER") or getenv("PATH_TO_FOLDER")
 
         try:
@@ -118,7 +117,7 @@ class SubmissionManager:
     
     def get_all_accepted_submissions(self):
         """Get all accepted submissions."""
-        load_dotenv()
+        load_config()
         username = getenv("CF_USERNAME")
         
         import requests

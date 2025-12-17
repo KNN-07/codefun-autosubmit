@@ -5,13 +5,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.keys import Keys
-from dotenv import load_dotenv
 from os import getenv
+from .utils import load_config
 
 
 def setup_driver():
     """Setup and return Chrome WebDriver instance."""
-    load_dotenv()
+    load_config()
     chrome_path = getenv("CHROME_PATH", "chromedriver.exe")
     
     options = webdriver.ChromeOptions()
@@ -30,7 +30,7 @@ def setup_driver():
 
 def login_to_codefun(driver):
     """Login to Codefun.vn using credentials from environment variables."""
-    load_dotenv()
+    load_config()
     username = getenv("CF_USERNAME")
     password = getenv("CF_PASSWORD")
 
