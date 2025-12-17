@@ -117,7 +117,7 @@ def setup_configuration():
         chromedriverpath = input(
             "What is the path to your chromedriver.exe file?\n")
     
-env_path = get_config_path()
+    env_path = get_config_path()
     with open(env_path, "w") as f:
         f.write(f"CF_USERNAME = {username}\n")
         f.write(f"CF_PASSWORD = {pwd}\n")
