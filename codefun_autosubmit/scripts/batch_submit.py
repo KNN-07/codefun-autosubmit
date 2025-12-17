@@ -1,5 +1,6 @@
 """Batch submission script for multiple files."""
 
+import random
 import time
 from dotenv import load_dotenv
 from os import getenv
@@ -13,6 +14,8 @@ def main(input_folder=None):
     """Main function for batch submission."""
     load_dotenv()
     file_path = input_folder or getenv("PATH_TO_FOLDER")
+    base_wait_time = int(getenv("SUBMIT_WAIT_TIME", "90"))
+    random_range = int(getenv("SUBMIT_RANDOM_RANGE", "0"))
     sublist = []
 
     print(f"Preparing for submission of all files in folder {file_path}")
@@ -38,8 +41,9 @@ def main(input_folder=None):
         for file in sublist:
             try:
                 submission_manager.submit_file(f"{file_path}\\{file}")
-                print(f"{file} submitted, waiting for 90 secs")
-                time.sleep(90)
+                wait_time = base_wait_time + random.randint(0, random_range)
+                print(f"{file} submitted, waiting for {wait_time} secs")
+                time.sleep(wait_time)
             except KeyboardInterrupt:
                 halt = input("Sleep period interrupted, halt program? (y/n) ").lower()
                 if halt in ["y", "yes"]:

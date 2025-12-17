@@ -99,6 +99,16 @@ def setup_configuration():
     lang = input(
         "What is the default submitting language? (C++/Python3/Pascal/NAsm)\n")
 
+    wait_time = input(
+        "What is the base wait time between submissions? (in seconds, default: 90)\n")
+    if not wait_time:
+        wait_time = "90"
+
+    random_range = input(
+        "What is the random time range to add? (in seconds, default: 30)\n")
+    if not random_range:
+        random_range = "30"
+
     chromedriverpath = input(
         "What is the path to your chromedriver.exe file? (Type NA if you don't have chromedriver.exe)\n")
     while chromedriverpath == "NA":
@@ -113,6 +123,8 @@ def setup_configuration():
         f.write(f"PATH_TO_FOLDER = {input_filepath}\n")
         f.write(f"CRAWL_FOLDER = {crawl_filepath}\n")
         f.write(f"LANGUAGE = {lang}\n")
+        f.write(f"SUBMIT_WAIT_TIME = {wait_time}\n")
+        f.write(f"SUBMIT_RANDOM_RANGE = {random_range}\n")
         f.write(f"CHROME_PATH = {chromedriverpath}\n")
 
     print("Success")

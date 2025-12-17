@@ -56,15 +56,32 @@ def get_loop_list(folder_path=None):
     """Get list of problems to submit (not yet accepted)."""
     load_dotenv()
     file_path = folder_path or getenv("PATH_TO_FOLDER")
-    ext = get_extension(getenv("LANGUAGE"))
     aclist = get_accepted_problems()
     
     sublist = []
+    processed_problems = set()  # Track problems we've already added
+    
+    # Get all supported extensions
+    supported_exts = ["cpp", "py", "pas", "s"]
+    
     for filename in listdir(file_path):
-        if (filename.endswith(ext) and 
-            filename.split(".")[0] not in aclist and 
-            not filename.startswith("pass")):
-            print(filename.split(".")[0])
+        if filename.startswith("pass"):
+            continue
+            
+        # Extract problem name (without extension)
+        problem_name = filename.split(".")[0]
+        
+        # Skip if already processed this problem
+        if problem_name in processed_problems:
+            continue
+            
+        # Check if file has supported extension and problem not yet accepted
+        file_ext = filename.split(".")[-1] if "." in filename else ""
+        
+        if (file_ext in supported_exts and 
+            problem_name not in aclist):
+            print(problem_name)
             sublist.append(filename)
+            processed_problems.add(problem_name)
     
     return sublist

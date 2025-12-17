@@ -64,8 +64,34 @@ class SubmissionManager:
         """Submit code by problem ID and language."""
         load_dotenv()
         file_path = input_folder or getenv("PATH_TO_FOLDER")
+        
+        # Check for files with different extensions
+        import os
+        from .utils import get_language
+        
+        # Try to find file with specified language extension first
         ext = get_extension(language)
-        Query(self.driver, f"{file_path}\\P{problem_id}.{ext}", language, f"P{problem_id}")
+        target_file = f"{file_path}\\P{problem_id}.{ext}"
+        
+        if os.path.exists(target_file):
+            Query(self.driver, target_file, language, f"P{problem_id}")
+        else:
+            # Auto-detect language from existing file
+            found_file = None
+            detected_language = None
+            
+            for ext in ["cpp", "py", "pas", "s"]:
+                test_file = f"{file_path}\\P{problem_id}.{ext}"
+                if os.path.exists(test_file):
+                    found_file = test_file
+                    detected_language = get_language(ext)
+                    break
+            
+            if found_file:
+                print(f"File found with different extension. Using {detected_language} instead of {language}")
+                Query(self.driver, found_file, detected_language, f"P{problem_id}")
+            else:
+                raise Exception(f"No file found for problem P{problem_id}")
     
     def retrieve_submission(self, submission_id, problem_code, language, crawl_folder=None):
         """Retrieve submitted code."""
