@@ -35,6 +35,11 @@ def main():
         '--input-folder',
         help='Folder containing files to submit (overrides PATH_TO_FOLDER env var)'
     )
+    batch_parser.add_argument(
+        '--skip-submitted',
+        action='store_true',
+        help='Skip all submitted problems (not only AC problems)'
+    )
     
     # Fetch AC command
     fetch_parser = subparsers.add_parser('fetch', help='Fetch accepted submissions')
@@ -61,7 +66,7 @@ def main():
             tasks[:] = args.tasks
         auto_submit(input_folder=args.input_folder)
     elif args.command == 'batch':
-        batch_submit(input_folder=args.input_folder)
+        batch_submit(input_folder=args.input_folder, skip_submitted=args.skip_submitted)
     elif args.command == 'fetch':
         fetch_ac(crawl_folder=args.crawl_folder)
     elif args.command == 'setup':

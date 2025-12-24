@@ -12,6 +12,7 @@ Based on: https://github.com/Unknown15082/CodefunAutoSubmit
 - 📥 **Fetch Submissions**: Download your accepted submissions
 - 🛠️ **CLI Interface**: Easy-to-use command-line interface
 - ⚙️ **Environment Configuration**: Secure configuration with .env files
+- 🔄 **Smart Skipping**: Skip only AC problems or all submitted problems
 
 ## Installation
 
@@ -56,6 +57,9 @@ python -m codefun_autosubmit auto --tasks 001 002 003
 ```bash
 # Submit all files in your configured folder that haven't been accepted yet
 codefun batch
+
+# Skip all submitted problems (including non-AC submissions)
+codefun batch --skip-submitted
 ```
 
 ### 4. Fetch Accepted Submissions
@@ -131,8 +135,11 @@ codefun setup
 # Auto submit specific problems
 codefun auto --tasks 001 002 003
 
-# Batch submit all pending files
+# Batch submit all pending files (skip only AC problems)
 codefun batch
+
+# Batch submit all pending files (skip all submitted problems)
+codefun batch --skip-submitted
 
 # Fetch all accepted submissions
 codefun fetch

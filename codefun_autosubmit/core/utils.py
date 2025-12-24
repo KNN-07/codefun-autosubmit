@@ -73,11 +73,37 @@ def get_accepted_problems():
     return accepted
 
 
-def get_loop_list(folder_path=None):
-    """Get list of problems to submit (not yet accepted)."""
+def get_submitted_problems():
+    """Get list of all submitted problems (regardless of status) from Codefun API."""
+    load_config()
+    username = getenv("CF_USERNAME")
+    
+    submitted = []
+    response = requests.get(f"https://codefun.vn/api/users/{username}/stats?")
+    json_data = json.loads(response.text)["data"]
+
+    for submission in json_data:
+        submitted.append(submission["problem"]["code"])
+    
+    return submitted
+
+
+def get_loop_list(folder_path=None, skip_submitted=False):
+    """Get list of problems to submit.
+    
+    Args:
+        folder_path: Path to folder containing code files
+        skip_submitted: If True, skip all submitted problems. If False, only skip AC problems.
+    """
     load_config()
     file_path = folder_path or getenv("PATH_TO_FOLDER")
-    aclist = get_accepted_problems()
+    
+    # Get list of problems to skip based on option
+    if skip_submitted:
+        from .utils import get_submitted_problems
+        skip_list = get_submitted_problems()
+    else:
+        skip_list = get_accepted_problems()
     
     sublist = []
     processed_problems = set()  # Track problems we've already added
@@ -100,7 +126,7 @@ def get_loop_list(folder_path=None):
         file_ext = filename.split(".")[-1] if "." in filename else ""
         
         if (file_ext in supported_exts and 
-            problem_name not in aclist):
+            problem_name not in skip_list):
             print(problem_name)
             sublist.append(filename)
             processed_problems.add(problem_name)

@@ -9,8 +9,13 @@ from ..core.submission import SubmissionManager
 from ..core.utils import get_loop_list, load_config
 
 
-def main(input_folder=None):
-    """Main function for batch submission."""
+def main(input_folder=None, skip_submitted=False):
+    """Main function for batch submission.
+    
+    Args:
+        input_folder: Path to folder containing code files
+        skip_submitted: If True, skip all submitted problems. If False, only skip AC problems.
+    """
     load_config()
     file_path = input_folder or getenv("PATH_TO_FOLDER")
     base_wait_time = int(getenv("SUBMIT_WAIT_TIME", "90"))
@@ -20,7 +25,7 @@ def main(input_folder=None):
     print(f"Preparing for submission of all files in folder {file_path}")
     
     try:
-        sublist = get_loop_list(file_path)
+        sublist = get_loop_list(file_path, skip_submitted)
     except ConnectionError:
         print("Connection error")
         exit(1)
